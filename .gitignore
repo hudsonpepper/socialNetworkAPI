@@ -1,2 +1,10 @@
-.vscode
 node_modules
+.env
+.DS_Store
+.vscode
+package-lock.json
+
+controllers/controllers(old)
+models/models(old)
+routes/api/api(old)
+utils/utils(old)
