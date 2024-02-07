@@ -1,25 +1,34 @@
 const { Schema, model } = require('mongoose');
-const assignmentSchema = require('./Assignment');
+const dayjs = require('dayjs');
 
 // Schema to create Student model
-const studentSchema = new Schema(
+const userSchema = new Schema(
   {
-    first: {
+    username: {
       type: String,
+      unique: true, 
       required: true,
-      max_length: 50,
+      trim: true,
     },
-    last: {
+    email: {
       type: String,
+      unique: true, 
       required: true,
-      max_length: 50,
+      validate: {
+        validator: function (email) {
+          const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return emailRegex.test(email)
+        }
+      }
     },
-    github: {
-      type: String,
-      required: true,
-      max_length: 50,
-    },
-    assignments: [assignmentSchema],
+    thoughts: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'thought'
+    }],
+    friends: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user'
+    }]
   },
   {
     toJSON: {
@@ -29,7 +38,9 @@ const studentSchema = new Schema(
   },
 );
 
+userSchema.virtual('friendCount').get(function () {
+  return this.friends.length;
+})
+const User = model('user', userSchema);
 
-const Student = model('student', studentSchema);
-
-module.exports = Student;
+module.exports = User;
